@@ -12,7 +12,7 @@ $ pip install -U hot-recharge
 ### doing get requests
 - this shows how to do basic get requests for different services
 ```python
-import HotRecharge
+import hotrecharge
 import pprint
 
 credentials = {
@@ -22,7 +22,7 @@ credentials = {
 }
 
 # to use random code generated references, flag it to True
-api = HotRecharge.HotRecharge(headers=credentials, use_random_ref=True)
+api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=True)
 
 try:
     # get wallet balance
@@ -59,7 +59,7 @@ except Exception as ex:
 %BUNDLE%	Name of the Data Bundle
 ```
 ```python
-import HotRecharge
+import hotrecharge
 import sys
 from pprint import pprint
 
@@ -70,7 +70,7 @@ credentials = {
 }
 
 # to use random code generated references, flag it to True
-api = HotRecharge.HotRecharge(headers=credentials, use_random_ref=False)
+api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=False)
 
 try:
     # recharge data bundle with a (OPTIONAL) custom Customer SMS, max char should not exceed 135
@@ -96,7 +96,7 @@ except Exception as ex:
 
 ### recharge pinless
 ```python
-import HotRecharge
+import hotrecharge
 import sys
 
 credentials = {
@@ -106,7 +106,7 @@ credentials = {
 }
 
 # to use random code generated references, flag it to True
-api = HotRecharge.HotRecharge(headers=credentials, use_random_ref=False)
+api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=False)
 
 try:
     # recharge pinless with a (OPTIONAL) custom Customer SMS, max char should not exceed 135
