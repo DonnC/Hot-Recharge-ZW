@@ -12,7 +12,7 @@ class HotRecharge:
     __ROOT_ENDPOINT = "https://ssl.hot.co.zw/api/v1/"
     __MIME_TYPES    = "application/json"
 
-    def __init__(self, headers, use_random_ref=False):
+    def __init__(self, headers, use_random_ref=True):
         self.headers        = headers
         self.use_random_ref = use_random_ref
         self.__headers()
