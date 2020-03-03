@@ -3,7 +3,7 @@
 # @created: 09 Dec 2019
 # @updated: 09 Dec 2019
 
-import HotRecharge
+import hotrecharge
 import sys
 from pprint import pprint
 
@@ -14,7 +14,7 @@ credentials = {
 }
 
 # to use random code generated references, flag it to True
-api = HotRecharge.HotRecharge(headers=credentials, use_random_ref=False)
+api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=False)
 
 try:
     # recharge data bundle with a (OPTIONAL) custom Customer SMS, max char should not exceed 135

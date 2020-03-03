@@ -7,11 +7,10 @@ $ pip install -U hot-recharge
 ```
 
 ## Library Usage
-- Refer to the [hot recharge web service doc](Docs/HOT%20Recharge%20Webservice%202.7.7.docx)
+- Refer to the [hot recharge web service doc](https://github.com/DonnC/Hot-Recharge-ZW/blob/master/Docs/HOT%20Recharge%20Webservice%202.7.7.docx)
 
 ### doing get requests
-- the example file `get_tests.py` show how to do basic get requests for different services
-- Check out [get_tests.py](example/get_tests.py)
+- this shows how to do basic get requests for different services
 ```python
 import HotRecharge
 import pprint
@@ -47,19 +46,18 @@ try:
 except Exception as ex:
     print(f"There was a problem: {ex}")
 ```
-- 
+-
 # Recharge
 ## Recharge data bundles
 - use bundle product code
 - an optional customer sms can be send together upon request
 - Place holders used include
 ```
-%AMOUNT% 	$XXX.XX	
+%AMOUNT% 	$XXX.XX
 %COMPANYNAME%	As Defined by Customer on the website www.hot.co.zw
 %ACCESSNAME%	Defined by Customer on website – Teller or Trusted User or branch name
-%BUNDLE%	Name of the Data Bundle 
+%BUNDLE%	Name of the Data Bundle
 ```
-- Example script [recharge_databundles.py](example/recharge_databundle.py)
 ```python
 import HotRecharge
 import sys
@@ -97,7 +95,6 @@ except Exception as ex:
 ```
 
 ### recharge pinless
-- Example script available at [recharge_pinless](example/recharge_pinless.py)
 ```python
 import HotRecharge
 import sys
@@ -135,6 +132,4 @@ try:
 
 except Exception as ex:
     print(f"There was a problem: {ex}")
-
-
 ```

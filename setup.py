@@ -9,10 +9,10 @@ REQUIRED = [
 
 setuptools.setup(
     name="hot-recharge",
-    version="1.0.0",
+    version="1.1.0",
     author="Donald Chinhuru",
     author_email="donychinhuru@gmail.com",
-    description="hot recharge transation using a rest library",
+    description="perform hot recharge transactions",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/DonnC/Hot-Recharge-ZW",

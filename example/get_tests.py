@@ -3,7 +3,7 @@
 # @created: 09 Dec 2019
 # @updated: 09 Dec 2019
 
-import HotRecharge
+import hotrecharge
 import pprint
 
 credentials = {
@@ -13,7 +13,7 @@ credentials = {
 }
 
 # to use random code generated references, flag it to True
-api = HotRecharge.HotRecharge(headers=credentials, use_random_ref=True)
+api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=True)
 
 try:
     # get wallet balance
