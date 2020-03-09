@@ -1,18 +1,29 @@
-import requests
 from random import randint
+from json import dumps, loads
+from http.client import HTTPSConnection
 
 class HotRecharge:
     """
         Hot Recharge web service library
         __author__  Donald Chinhuru
-        __version__ 1.1.0
+        __version__ 1.2.0
         __name__    Hot Recharge api
     """
 
-    __ROOT_ENDPOINT = "https://ssl.hot.co.zw/api/v1/"
-    __MIME_TYPES    = "application/json"
+    __ROOT_ENDPOINT     = "ssl.hot.co.zw"
+    __API_VERSION       = "/api/v1/"
+    __MIME_TYPES        = "application/json"
 
-    def __init__(self, headers, use_random_ref=False):
+    # endpoints definition
+    __RECHARGE_PINLESS  = "agents/recharge-pinless"
+    __RECHARGE_DATA     = "agents/recharge-data"
+    __WALLET_BALANCE    = "agents/wallet-balance"
+    __GET_DATA_BUNDLE   = "agents/get-data-bundles"
+    __ENDUSER_BALANCE   = "agents/enduser-balance?targetmobile="
+
+    __conn              = HTTPSConnection(__ROOT_ENDPOINT)
+
+    def __init__(self, headers, use_random_ref=True):
         self.headers        = headers
         self.use_random_ref = use_random_ref
         self.__headers()
@@ -25,18 +36,19 @@ class HotRecharge:
         self.headers = {
             'x-access-code': self.headers.get('code'),
             'x-access-password': self.headers.get('pswd'),
-            'x-agent-reference': self.headers.get('ref')
+            'x-agent-reference': self.headers.get('ref'),
+            'content-type': self.__MIME_TYPES,
+            'cache-control': "no-cache"
         }
 
     def __autoUpdateRef(self):
         if self.use_random_ref:
             self.headers.update({'x-agent-reference': str(randint(10000, 99999))})
 
-
     def updateReference(self, reference):
         """
         update agent-reference field in headers.
-        Reference should not be the same for any request made to Hot Recharge web service
+        Reference should not be the same for any request made to the web service
         :param reference:
         :return: None
         """
@@ -49,32 +61,30 @@ class HotRecharge:
         """
         self.__autoUpdateRef()
 
-        wbURI = "agents/wallet-balance"
-        uri = self.__ROOT_ENDPOINT + wbURI
-        req = requests.get(url=uri, headers=self.headers)
+        url = f"{self.__API_VERSION}{self.__WALLET_BALANCE}"
 
-        req.raise_for_status()
+        self.__conn.request("GET", url=url, headers=self.headers)
 
-        resp = req.json()
+        res  = self.__conn.getresponse()
+        data = res.read()
 
-        return resp
+        return loads(data.decode("utf-8"))
 
-    def endUserBalance(self, mobile_number=None):
+    def endUserBalance(self, mobile_number):
         """
         :param mobile_number:
         :return: End User Balance
         """
         self.__autoUpdateRef()
 
-        eubURI = f"agents/enduser-balance?targetMobile={mobile_number}"
-        uri    = self.__ROOT_ENDPOINT + eubURI
-        req = requests.get(url=uri, headers=self.headers)
+        url = f"{self.__API_VERSION}{self.__ENDUSER_BALANCE}{mobile_number}"
 
-        req.raise_for_status()
+        self.__conn.request("GET", url=url, headers=self.headers)
 
-        resp = req.json()
+        res  = self.__conn.getresponse()
+        data = res.read()
 
-        return resp
+        return loads(data.decode("utf-8"))
 
     def rechargePinless(self, amount, number, brandID=None, mesg=None):
         """
@@ -94,27 +104,25 @@ class HotRecharge:
         """
         self.__autoUpdateRef()
 
-        body = {
-            'Amount': float(amount),
-            'TargetMobile': number,
-            'BrandID': brandID,
-            'CustomerSMS': mesg
+        # FIXME Include Optional key-value of brandID and mesg
+        payload = {
+            "amount": amount,
+            "targetMobile": number
         }
 
-        rpURI = "agents/recharge-pinless"
-        uri   = self.__ROOT_ENDPOINT + rpURI
-        req   = requests.post(url=uri, data=body, headers=self.headers)
+        url = f"{self.__API_VERSION}{self.__RECHARGE_PINLESS}"
 
-        req.raise_for_status()
+        self.__conn.request("POST", url, dumps(payload), self.headers)
 
-        resp = req.json()
+        res  = self.__conn.getresponse()
+        data = res.read()
 
-        return resp
+        return loads(data.decode("utf-8"))
 
     def dataBundleRecharge(self, product_code, number, amount=None, mesg=None):
         """
         recharge data bundles to `number` target mobile
-        :param product_code: bundle product code
+        :param product_code: bundle product code e.g DWB15 for `weekly data bundle - Econent`
         :param number: target mobile in 07xxxxxxxx | 086XXxxxxxx
         :param amount: Optional, value of bundle
         :param mesg: Optional,  customer sms to send
@@ -128,36 +136,33 @@ class HotRecharge:
 
         self.__autoUpdateRef()
 
-        body = {
-            "ProductCode": product_code,
-            "Amount": amount,
-            "TargetMobile": number,
-            "CustomerSMS": mesg
+        # FIXME Add customer message key-value && amount
+        payload = {
+            "productcode": product_code,
+            "targetMobile": number
         }
 
-        dbrURI = "agents/recharge-data"
-        uri    = self.__ROOT_ENDPOINT + dbrURI
-        req    = requests.post(url=uri, data=body, headers=self.headers)
+        url = f"{self.__API_VERSION}{self.__RECHARGE_DATA}"
 
-        req.raise_for_status()
+        self.__conn.request("POST", url, dumps(payload), self.headers)
 
-        resp = req.json()
+        res  = self.__conn.getresponse()
+        data = res.read()
 
-        return resp
+        return loads(data.decode("utf-8"))
 
     def getDataBundles(self):
         """
         get available data bundles
-        :return:
+        :return: dict object containing bundles info and product-codes
         """
         self.__autoUpdateRef()
 
-        gdbURI = "agents/get-data-bundles"
-        uri    = self.__ROOT_ENDPOINT + gdbURI
-        req    = requests.get(url=uri, headers=self.headers)
+        url = f"{self.__API_VERSION}{self.__GET_DATA_BUNDLE}"
 
-        req.raise_for_status()
+        self.__conn.request("GET", url=url, headers=self.headers)
 
-        resp = req.json()
+        res  = self.__conn.getresponse()
+        data = res.read()
 
-        return resp
+        return loads(data.decode("utf-8"))

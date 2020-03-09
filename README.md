@@ -1,5 +1,5 @@
 # [Hot Recharge](hot.co.zw)
-library to do hot recharge transactions via a web service
+library to do hot recharge transactions via a web service rest api
 
 ## Library installation
 ```sh
@@ -9,19 +9,24 @@ $ pip install -U hot-recharge
 ## Library Usage
 - Refer to the [hot recharge web service doc](https://github.com/DonnC/Hot-Recharge-ZW/blob/master/Docs/HOT%20Recharge%20Webservice%202.7.7.docx)
 
+### Sign Up
+- needs a hot recharge coroperate account, sign up [here](https://ssl.hot.co.zw/register.aspx)
+![sign up](Docs/images/signup_cooperate.png)
+
 ### doing get requests
 - this shows how to do basic get requests for different services
 ```python
 import hotrecharge
 import pprint
 
+# pass dict keys as is, change dict values.. <fix coming soon>
 credentials = {
     'code': '<your-code>',
     'pswd': '<your-password',
     'ref': '<agent-reference>'
 }
 
-# to use random code generated references, flag it to True
+# to use random code generated references, flag it to True, reccommended
 api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=True)
 
 try:
