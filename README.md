@@ -6,11 +6,8 @@ library to do hot recharge transactions via a web service rest api
 $ pip install -U hot-recharge
 ```
 
-## Library Usage
-- Refer to the [hot recharge web service doc](https://github.com/DonnC/Hot-Recharge-ZW/blob/master/Docs/HOT%20Recharge%20Webservice%202.7.7.docx)
-
 ### Sign Up
-- needs a hot recharge coroperate account, sign up [here](https://ssl.hot.co.zw/register.aspx)
+- needs a hot recharge co-operate account, sign up [here](https://ssl.hot.co.zw/register.aspx)
 ![sign up](Docs/images/signup_cooperate.png)
 
 ### doing get requests
