@@ -1,5 +1,7 @@
-# [Hot Recharge](hot.co.zw)
+# [Hot Recharge](https://ssl.hot.co.zw/)
 library to do hot recharge transactions via a web service rest api
+
+- ℹ Not an official hot-recharge python library
 
 ## Library installation
 ```sh
