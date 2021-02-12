@@ -10,10 +10,10 @@ REQUIRED = [
 
 setuptools.setup(
     name="hot-recharge",
-    version="1.2.0",
+    version="1.3.0",
     author="Donald Chinhuru",
     author_email="donychinhuru@gmail.com",
-    description="perform hot recharge transactions via web service library",
+    description="perform airtime topup across all networks with hot-recharge programmatically",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/DonnC/Hot-Recharge-ZW",

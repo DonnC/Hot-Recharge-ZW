@@ -129,5 +129,4 @@ dmypy.json
 .pyre/
 
 # utils
-.Docs
-Docs/
+Docs/*.docx

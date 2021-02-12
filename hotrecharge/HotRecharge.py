@@ -1,13 +1,13 @@
-from random import randint
+from uuid import uuid4
 from json import dumps, loads
 from http.client import HTTPSConnection
 
 class HotRecharge:
     """
-        Hot Recharge web service library
+        Hot Recharge Python Api Library
         __author__  Donald Chinhuru
-        __version__ 1.2.0
-        __name__    Hot Recharge api
+        __version__ 1.3.0
+        __name__    Hot Recharge Api
     """
 
     __ROOT_ENDPOINT     = "ssl.hot.co.zw"
@@ -20,10 +20,11 @@ class HotRecharge:
     __WALLET_BALANCE    = "agents/wallet-balance"
     __GET_DATA_BUNDLE   = "agents/get-data-bundles"
     __ENDUSER_BALANCE   = "agents/enduser-balance?targetmobile="
+    __QUERY_TRANSACTION = "agents/query-transaction?agentReference="
 
     __conn              = HTTPSConnection(__ROOT_ENDPOINT)
 
-    def __init__(self, headers, use_random_ref=True):
+    def __init__(self, headers: dict, use_random_ref=True):
         self.headers        = headers
         self.use_random_ref = use_random_ref
         self.__headers()
@@ -41,11 +42,18 @@ class HotRecharge:
             'cache-control': "no-cache"
         }
 
+    def __uuidChunkRef(self):
+        # simple tokenizer to get a random str as ref from uuid
+        # uuid4() example := c1ce5f4a-0596-49a9-aa28-a118f2888122
+        uuid_ref =  str(uuid4())
+        chunk = uuid_ref.split('-')
+        return chunk[0]
+
     def __autoUpdateRef(self):
         if self.use_random_ref:
-            self.headers.update({'x-agent-reference': str(randint(10000, 99999))})
+            self.headers.update({'x-agent-reference': self.__uuidChunkRef()})
 
-    def updateReference(self, reference):
+    def updateReference(self, reference: str):
         """
         update agent-reference field in headers.
         Reference should not be the same for any request made to the web service
@@ -70,10 +78,27 @@ class HotRecharge:
 
         return loads(data.decode("utf-8"))
 
-    def endUserBalance(self, mobile_number):
+    def queryTransactionReference(self, agent_reference):
         """
-        :param mobile_number:
-        :return: End User Balance
+         Query a transaction for reconciliation: reccommended is to query within the last 30 days of the transaction
+        :param: agent_reference := previous record's transaction agentReference used
+        :return: api payload -> dict
+        """
+        self.__autoUpdateRef()
+
+        url = f"{self.__API_VERSION}{self.__QUERY_TRANSACTION}{agent_reference}"
+
+        self.__conn.request("GET", url=url, headers=self.headers)
+
+        res  = self.__conn.getresponse()
+        data = res.read()
+
+        return loads(data.decode("utf-8"))
+
+    def endUserBalance(self, mobile_number: str):
+        """
+        :param mobile_number: str
+        :return: End User Balance api response: dict
         """
         self.__autoUpdateRef()
 
@@ -100,21 +125,40 @@ class HotRecharge:
         %DATA% - xxx MB
         %COMPANYNAME% - as defined by Customer on the website www.hot.co.zw
         %ACCESSNAME% - defined by Customer on website – Teller or Trusted User or branch name
-        :return:
+        :return: response payload -> dict
         """
         self.__autoUpdateRef()
 
-        # FIXME Include Optional key-value of brandID and mesg
-        payload = {
-            "amount": amount,
-            "targetMobile": number
-        }
+        payload = dict()
+        payload["amount"] = amount
+    
+        if brandID:
+            payload["BrandID"] = brandID 
+
+        else:
+            pass
+
+        if mesg:
+            if len(mesg) > 135:
+                raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
+
+            payload["CustomerSMS"] = mesg
+
+        else:
+            pass 
+
+        if number.startswith('07') or number.startswith('08'):
+            payload["targetMobile"] = number
+
+        else:
+            raise Exception("targetMobile: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`")
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_PINLESS}"
 
         self.__conn.request("POST", url, dumps(payload), self.headers)
 
         res  = self.__conn.getresponse()
+
         data = res.read()
 
         return loads(data.decode("utf-8"))
@@ -131,16 +175,34 @@ class HotRecharge:
         %BUNDLE% - name of data bundle
         %ACCESSNAME% - defined by Customer on website – Teller or Trusted User or branch name
         %COMPANYNAME% - as defined by customer on website
-        :return:
+        :return: response dict payload
         """
 
         self.__autoUpdateRef()
 
-        # FIXME Add customer message key-value && amount
-        payload = {
-            "productcode": product_code,
-            "targetMobile": number
-        }
+        payload = dict()
+        payload["productcode"] = product_code
+
+        if amount:
+            payload["amount"] = amount 
+
+        else:
+            pass
+
+        if mesg:
+            if len(mesg) > 135:
+                raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
+
+            payload["CustomerSMS"] = mesg
+
+        else:
+            pass 
+
+        if number.startswith('07') or number.startswith('08'):
+            payload["targetMobile"] = number
+
+        else:
+            raise Exception("targetMobile: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`")
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_DATA}"
 
