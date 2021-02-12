@@ -17,7 +17,7 @@ please see full [changelog here](CHANGELOG.md)
 
 ## Sign Up
 - needs a hot recharge co-operate account, sign up [here](https://ssl.hot.co.zw/register.aspx)
-- ![sign up]([Docs/images/signup_cooperate.png](https://github.com/DonnC/Hot-Recharge-ZW/raw/master/Docs/images/signup_cooperate.png))
+- ![sign up](https://github.com/DonnC/Hot-Recharge-ZW/blob/master/Docs/images/signup_cooperate.png)
 
 ## Authentication keys
 - `code` := the email address used on registration
