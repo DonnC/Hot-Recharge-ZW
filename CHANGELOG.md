@@ -1,3 +1,9 @@
+## [1.4.0] - Mar 2021
+* Can now perform zesa recharge operations `api.zesaRecharge(..)`
+* Can check zesa customer details from meter number `api.checkZesaCustomer(..)`
+* removed `endUserBalance` method
+* removed `requests` library on requirements
+  
 ## [1.3.0] - 12 Feb 2021.
 * you can now, finally, be able to include `brandID` and CustomerSMS (`mesg`) when making `.rechargePinless(...)` requests
  

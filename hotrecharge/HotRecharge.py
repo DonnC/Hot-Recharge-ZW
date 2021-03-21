@@ -1,3 +1,11 @@
+'''
+    @author:    DonnC <https://github.com/DonnC>
+    @created:   December 2019
+    @updated:   March 2021
+
+    HotRecharge api main class
+'''
+
 from uuid import uuid4
 from json import dumps, loads
 from http.client import HTTPSConnection
@@ -6,7 +14,7 @@ class HotRecharge:
     """
         Hot Recharge Python Api Library
         __author__  Donald Chinhuru
-        __version__ 1.3.0
+        __version__ 1.4.0
         __name__    Hot Recharge Api
     """
 
@@ -21,9 +29,13 @@ class HotRecharge:
     __GET_DATA_BUNDLE   = "agents/get-data-bundles"
     __ENDUSER_BALANCE   = "agents/enduser-balance?targetmobile="
     __QUERY_TRANSACTION = "agents/query-transaction?agentReference="
+    __RECHARGE_ZESA     = "agents/recharge-zesa"
+    __ZESA_CUSTOMER     = "agents/check-customer-zesa"
 
     __conn              = HTTPSConnection(__ROOT_ENDPOINT)
 
+    # TODO: make a better way of passing auth keys
+    # TODO: consider using a Config class
     def __init__(self, headers: dict, use_random_ref=True):
         self.headers        = headers
         self.use_random_ref = use_random_ref
@@ -95,7 +107,8 @@ class HotRecharge:
 
         return loads(data.decode("utf-8"))
 
-    def endUserBalance(self, mobile_number: str):
+    # TODO: deprecated, will be removed later
+    def __endUserBalance(self, mobile_number: str):
         """
         :param mobile_number: str
         :return: End User Balance api response: dict
@@ -225,6 +238,72 @@ class HotRecharge:
         self.__conn.request("GET", url=url, headers=self.headers)
 
         res  = self.__conn.getresponse()
+        data = res.read()
+
+        return loads(data.decode("utf-8"))
+
+    def rechargeZesa(self, amount, notify_contact, meter_number, mesg=None):
+        '''
+            recharge zesa
+            amount: should be $50+ per api requirements
+            notify_contact: contact to sent zesa token to
+            meter_number: the 11 digit meter number to recharge
+            mesg: (Optional) custom message to send to user
+        '''
+
+        self.__autoUpdateRef()
+
+        payload = dict()
+
+        payload["Amount"] = amount
+
+        payload["meterNumber"] = meter_number
+
+        if mesg:
+            if len(mesg) > 135:
+                raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
+
+            payload["CustomerSMS"] = mesg
+
+        else:
+            pass 
+
+        if notify_contact.startswith('07'):
+            payload["TargetNumber"] = number
+
+        else:
+            raise Exception("TargetNumber: `notify_contact` passed has incorrect format. Allowed formats are `07xxx..`")
+
+        url = f"{self.__API_VERSION}{self.__RECHARGE_ZESA}"
+
+        self.__conn.request("POST", url, dumps(payload), self.headers)
+
+        res  = self.__conn.getresponse()
+
+        data = res.read()
+
+        return loads(data.decode("utf-8"))
+
+    def checkZesaCustomer(self, meter_number):
+        '''
+            check zesa customer. please note! You are advised to first check zesa customer before performing
+            zesa recharge, i.e prompt the user to confirm their details first before proceeding
+            meter_number: the 11 digit meter number of suer
+            :return: on successsful, it returns user information and address, print response for more
+        '''
+
+        self.__autoUpdateRef()
+
+        payload = {
+            "MeterNumber": meter_number,
+        }
+
+        url = f"{self.__API_VERSION}{self.__ZESA_CUSTOMER}"
+
+        self.__conn.request("POST", url, dumps(payload), self.headers)
+
+        res  = self.__conn.getresponse()
+
         data = res.read()
 
         return loads(data.decode("utf-8"))

@@ -1,7 +1,7 @@
 # get_tests.py
 # @author:  Donald Chinhuru
 # @created: 09 Dec 2019
-# @updated: 09 Dec 2019
+# @updated: Mar 2021
 
 import hotrecharge
 import pprint
@@ -21,17 +21,11 @@ try:
     # get wallet balance
     wallet_bal_response = api.walletBalance()
 
-    # get end user balance
-    end_user_bal_resp = api.endUserBalance('077xxxxxxx')
-
     # get data bundles
     data_bundles_resp = api.getDataBundles()
 
     print("Wallet Balance: ")
     pprint.pprint(wallet_bal_response)
-
-    print("End User Balance: ")
-    pprint.pprint(end_user_bal_resp)
 
     print("Data Bundles Balance: ")
     pprint.pprint(data_bundles_resp)
