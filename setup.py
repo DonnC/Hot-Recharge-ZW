@@ -3,17 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-# TODO Implement api requests using `requests` module
-REQUIRED = [
-    'requests'
-]
-
 setuptools.setup(
     name="hot-recharge",
-    version="1.3.0",
+    version="1.4.0",
     author="Donald Chinhuru",
     author_email="donychinhuru@gmail.com",
-    description="perform airtime topup across all networks with hot-recharge programmatically",
+    description="perform hot-recharge services with hot-recharge library programmatically",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/DonnC/Hot-Recharge-ZW",
