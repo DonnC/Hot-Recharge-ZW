@@ -6,16 +6,14 @@
 import hotrecharge
 import pprint
 
-# TODO:: Add Config module
-# change dict values only
-credentials = {
-    'code': '<your-code>',
-    'pswd': '<your-password',
-    'ref': '<agent-reference>'
-}
+# use config helper class
+config = hotrecharge.HRAuthConfig(
+    access_code='', 
+    access_password='',
+    reference=''
+)
 
-# to use random code generated references, flag it to True, True by default, <<reccommended>>
-api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=True)
+api = hotrecharge.HotRecharge(config=config)
 
 try:
     # get wallet balance

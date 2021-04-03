@@ -6,13 +6,14 @@
 import hotrecharge
 from pprint import pprint
 
-credentials = {
-    'code': '<your-code>',
-    'pswd': '<your-password',
-    'ref': '<agent-reference>'
-}
+# use config helper class
+config = hotrecharge.HRAuthConfig(
+    access_code='', 
+    access_password='',
+    reference=''
+)
 
-api = hotrecharge.HotRecharge(headers=credentials)
+api = hotrecharge.HotRecharge(config=config)
 
 try:
     # to see other product-codes and more info, use api.getDataBundles()

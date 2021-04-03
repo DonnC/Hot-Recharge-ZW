@@ -15,22 +15,27 @@ $ pip install -U hot-recharge
 ## [CHANGELOG](CHANGELOG.md)
 please see full [changelog here](CHANGELOG.md)
 
+## Examples
+Check examples available [here](example)
+
 ## Sign Up
 - needs a hot recharge co-operate account or `contact hot-recharge for proper account`
 - ![sign up](https://raw.githubusercontent.com/DonnC/Hot-Recharge-ZW/master/Docs/images/signup_cooperate.png)
 
-## Authentication keys
-- `code` := the email address used on registration
-- `pswd` := the password of the account used on registration
-- `ref`  := any random string or chars < 50
-- these are passed as a dict, `use dict keys as is`
+## Authentication Header
+Use the new `HRAuthConfig` (from `v2.x.x`) class to pass auth header keys
 ```python
-# api credentials headers
-credentials = {
-    'code': '<your-email>',
-    'pswd': '<your-password',
-    'ref': '<any-random-text>'
-}
+import hotrecharge
+
+# create config class
+config = hotrecharge.HRAuthConfig(
+    access_code='acc-email', 
+    access_password='acc-pwd',
+    reference='random-ref'
+)
+
+# pass config object to api constructor
+api = hotrecharge.HotRecharge(config)
 ```
 
 ## Performing requests
@@ -38,8 +43,6 @@ credentials = {
 ```python
 import hotrecharge
 import pprint
-
-api = hotrecharge.HotRecharge(headers=credentials)
 
 try:
     # get wallet balance
@@ -70,15 +73,7 @@ except Exception as ex:
 %BUNDLE%	    Name of the Data Bundle
 ```
 ```python
-import hotrecharge
-from pprint import pprint
-
-# you can opt to update the reference code manually 
-# by setting `use_random_ref` to False
-api = hotrecharge.HotRecharge(headers=credentials, use_random_ref=False)
-
 try:
-
     # option message to send to user
     customer_sms =  " Amount of %AMOUNT% for data %BUNDLE% recharged! " \
                     " %ACCESSNAME%. The best %COMPANYNAME%!"
@@ -86,7 +81,7 @@ try:
     # need to update reference manually, if `use_random_ref` is set to False
     api.updateReference('<new-random-string>')
 
-    response = api.dataBundleRecharge(product_code="<bundle-product-code>", number="071xxxxxxx", mesg=customer_sms)
+    response = api.dataBundleRecharge(product_code="<bundle-product-code>", number="077xxxxxxx", mesg=customer_sms)
 
     pprint(response)
 
@@ -96,10 +91,6 @@ except Exception as ex:
 
 ### Recharge pinless
 ```python
-import hotrecharge
-
-api = hotrecharge.HotRecharge(headers=credentials)
-
 try:
     customer_sms = "Recharge of %AMOUNT% successful" \
                    "Initial balance $%INITIALBALANCE%" \
@@ -114,7 +105,7 @@ except Exception as ex:
     print(f"There was a problem: {ex}")
 ```
 
-## Zesa Recharge: new in  `v1.4.x` ✨
+## Zesa Recharge
 custom Message place holders to use and their representation on end user for zesa transactions:
 - `%AMOUNT% - $xxx.xx`
 - `%KWH% - Unit in Kilowatt Hours(Kwh)`
@@ -144,17 +135,10 @@ custom Message place holders to use and their representation on end user for zes
 - You must call Query ZESA method `TBD` periodically until a permanent resolution of the transaction occurs. This polling of a pending transaction should not exceed more that **4 request a minute**. Resending of transactions that have not yet failed can result in the duplication of transaction and lose of funds. 
 - Please note ZESA does not allow *refunds* so the cost of any errors cannot be recovered. 
 
-
-# New in `v1.3.0`✨
-- fully implemented method parameters e.g `brandID` and `mesg` for customerSMS on api method calls
 ### Query transaction
 - You can now query a previous transaction by its `agentReference` for reconciliation. 
 - It is reccommended to query within the last 30 days of the transaction
 ```python
-import hotrecharge
-
-api = hotrecharge.HotRecharge(headers=credentials)
-
 try:
     response = api.rechargePinless(amount=3.5, number="077xxxxxxx")
 

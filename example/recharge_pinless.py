@@ -5,15 +5,14 @@
 
 import hotrecharge
 
-# change values only, keep the dict keys
-# TODO Add Config module
-credentials = {
-    'code': '<your-code>',
-    'pswd': '<your-password',
-    'ref': '<agent-reference>'
-}
+# use config helper class
+config = hotrecharge.HRAuthConfig(
+    access_code='', 
+    access_password='',
+    reference=''
+)
 
-api = hotrecharge.HotRecharge(headers=credentials)
+api = hotrecharge.HotRecharge(config=config)
 
 try:
     response = api.rechargePinless(amount=1.50, number="077xxxxxxx")

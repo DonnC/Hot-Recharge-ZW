@@ -1,6 +1,7 @@
 #  __init__.py
 from hotrecharge.HotRecharge import HotRecharge
+from hotrecharge.HRConfig import HRAuthConfig
 
 __author__  = "Donald Chinhuru"
-__version__ = "1.4.0"
+__version__ = "2.0.0"
 __name__    = "hot-recharge"

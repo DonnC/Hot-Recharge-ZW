@@ -1,7 +1,7 @@
 '''
     @author:    DonnC <https://github.com/DonnC>
     @created:   December 2019
-    @updated:   March 2021
+    @updated:   April 2021
 
     HotRecharge api main class
 '''
@@ -10,11 +10,13 @@ from uuid import uuid4
 from json import dumps, loads
 from http.client import HTTPSConnection
 
+from .HRConfig import HRAuthConfig
+
 class HotRecharge:
     """
         Hot Recharge Python Api Library
         __author__  Donald Chinhuru
-        __version__ 1.4.0
+        __version__ 2.0.0
         __name__    Hot Recharge Api
     """
 
@@ -31,28 +33,38 @@ class HotRecharge:
     __QUERY_TRANSACTION = "agents/query-transaction?agentReference="
     __RECHARGE_ZESA     = "agents/recharge-zesa"
     __ZESA_CUSTOMER     = "agents/check-customer-zesa"
+    __QUERY_EVD         = "agents/query-evd"
+    __RECHARGE_EVD      = "agents/recharge-evd"
 
     __conn              = HTTPSConnection(__ROOT_ENDPOINT)
+    __headers           = {}
 
-    # TODO: make a better way of passing auth keys
-    # TODO: consider using a Config class
-    def __init__(self, headers: dict, use_random_ref=True):
-        self.headers        = headers
+    def __init__(self, config: HRAuthConfig, use_random_ref=True):
         self.use_random_ref = use_random_ref
-        self.__headers()
+        self.config         = config
+        self.__setupHeaders()
 
-    def __headers(self):
-        # for proper auth, headers are required, ref must be 50 char max
-        if self.headers.get('ref') and len(self.headers.get('ref')) > 50:
-            raise Exception("AGENT Reference must not exceed 50 characters")
+    def __setupHeaders(self):
+        if self.config:
+            #print(self.config)
 
-        self.headers = {
-            'x-access-code': self.headers.get('code'),
-            'x-access-password': self.headers.get('pswd'),
-            'x-agent-reference': self.headers.get('ref'),
-            'content-type': self.__MIME_TYPES,
-            'cache-control': "no-cache"
-        }
+            if self.use_random_ref:
+                self.__headers = {
+                    'x-access-code': self.config.access_code,
+                    'x-access-password': self.config.access_password,
+                    'x-agent-reference': self.__uuidChunkRef(),
+                    'content-type': self.__MIME_TYPES,
+                    'cache-control': "no-cache"
+                }
+
+            else:
+                self.__headers = {
+                    'x-access-code': self.config.access_code,
+                    'x-access-password': self.config.access_password,
+                    'x-agent-reference': self.config.reference,
+                    'content-type': self.__MIME_TYPES,
+                    'cache-control': "no-cache"
+                }
 
     def __uuidChunkRef(self):
         # simple tokenizer to get a random str as ref from uuid
@@ -63,7 +75,7 @@ class HotRecharge:
 
     def __autoUpdateRef(self):
         if self.use_random_ref:
-            self.headers.update({'x-agent-reference': self.__uuidChunkRef()})
+            self.__headers.update({'x-agent-reference': self.__uuidChunkRef()})
 
     def updateReference(self, reference: str):
         """
@@ -72,7 +84,7 @@ class HotRecharge:
         :param reference:
         :return: None
         """
-        self.headers.update({'x-agent-reference': reference})
+        self.__headers.update({'x-agent-reference': reference})
 
     def walletBalance(self):
         """
@@ -83,7 +95,7 @@ class HotRecharge:
 
         url = f"{self.__API_VERSION}{self.__WALLET_BALANCE}"
 
-        self.__conn.request("GET", url=url, headers=self.headers)
+        self.__conn.request("GET", url=url, headers=self.__headers)
 
         res  = self.__conn.getresponse()
         data = res.read()
@@ -100,24 +112,7 @@ class HotRecharge:
 
         url = f"{self.__API_VERSION}{self.__QUERY_TRANSACTION}{agent_reference}"
 
-        self.__conn.request("GET", url=url, headers=self.headers)
-
-        res  = self.__conn.getresponse()
-        data = res.read()
-
-        return loads(data.decode("utf-8"))
-
-    # TODO: deprecated, will be removed later
-    def __endUserBalance(self, mobile_number: str):
-        """
-        :param mobile_number: str
-        :return: End User Balance api response: dict
-        """
-        self.__autoUpdateRef()
-
-        url = f"{self.__API_VERSION}{self.__ENDUSER_BALANCE}{mobile_number}"
-
-        self.__conn.request("GET", url=url, headers=self.headers)
+        self.__conn.request("GET", url=url, headers=self.__headers)
 
         res  = self.__conn.getresponse()
         data = res.read()
@@ -152,8 +147,8 @@ class HotRecharge:
             pass
 
         if mesg:
-            if len(mesg) > 135:
-                raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
+            #if len(mesg) > 135:
+            #    raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
 
             payload["CustomerSMS"] = mesg
 
@@ -168,7 +163,7 @@ class HotRecharge:
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_PINLESS}"
 
-        self.__conn.request("POST", url, dumps(payload), self.headers)
+        self.__conn.request("POST", url, dumps(payload), self.__headers)
 
         res  = self.__conn.getresponse()
 
@@ -194,17 +189,17 @@ class HotRecharge:
         self.__autoUpdateRef()
 
         payload = dict()
-        payload["productcode"] = product_code
+        payload["ProductCode"] = product_code
 
         if amount:
-            payload["amount"] = amount 
+            payload["Amount"] = amount 
 
         else:
             pass
 
         if mesg:
-            if len(mesg) > 135:
-                raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
+            #if len(mesg) > 135:
+            #    raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
 
             payload["CustomerSMS"] = mesg
 
@@ -212,20 +207,55 @@ class HotRecharge:
             pass 
 
         if number.startswith('07') or number.startswith('08'):
-            payload["targetMobile"] = number
+            payload["TargetMobile"] = number
 
         else:
             raise Exception("targetMobile: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`")
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_DATA}"
 
-        self.__conn.request("POST", url, dumps(payload), self.headers)
+        self.__conn.request("POST", url, dumps(payload), self.__headers)
 
         res  = self.__conn.getresponse()
         data = res.read()
 
         return loads(data.decode("utf-8"))
 
+    def rechargeEVD(self, brand_id, pin_value, number, quantity=1):
+        """
+        recharge evd to `number` target mobile, voucher pin will be send to `number`
+        :param brand_id: brand id of evd as got from `api.getEVD()` e.g 24
+        :param pin_value: evd value as float, (used to be Denomination)
+        :param number: contact number to sent voucher pin, usually netone
+        :param quantity: number of voucher pins to purchase
+ 
+        :return: response dict payload
+        on successful, pins will be a list of string : PIN, SerialNumber, BrandID, Denomination, Expiry
+        e.g ['0812273518776434,008101288101|17,.50,3/27/2021']
+        """
+
+        self.__autoUpdateRef()
+
+        payload = dict()
+        payload["BrandID"] = str(brand_id)
+        payload["Denomination"] = str(pin_value)
+        payload["Quantity"] = str(quantity)
+
+        if number.startswith('07') or number.startswith('08'):
+            payload["TargetNumber"] = number
+
+        else:
+            raise Exception("targetNumber: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`")
+
+        url = f"{self.__API_VERSION}{self.__RECHARGE_EVD}"
+
+        self.__conn.request("POST", url, dumps(payload), self.__headers)
+
+        res  = self.__conn.getresponse()
+        data = res.read()
+
+        return loads(data.decode("utf-8"))
+    
     def getDataBundles(self):
         """
         get available data bundles
@@ -235,7 +265,23 @@ class HotRecharge:
 
         url = f"{self.__API_VERSION}{self.__GET_DATA_BUNDLE}"
 
-        self.__conn.request("GET", url=url, headers=self.headers)
+        self.__conn.request("GET", url=url, headers=self.__headers)
+
+        res  = self.__conn.getresponse()
+        data = res.read()
+
+        return loads(data.decode("utf-8"))
+
+    def getEVDs(self):
+        """
+        query evds (electronic vouchers)
+        :return: dict object containing evds
+        """
+        self.__autoUpdateRef()
+
+        url = f"{self.__API_VERSION}{self.__QUERY_EVD}"
+
+        self.__conn.request("GET", url=url, headers=self.__headers)
 
         res  = self.__conn.getresponse()
         data = res.read()
@@ -260,8 +306,8 @@ class HotRecharge:
         payload["meterNumber"] = meter_number
 
         if mesg:
-            if len(mesg) > 135:
-                raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
+            #if len(mesg) > 135:
+            #    raise Exception("CustomerSMS: `mesg` passed exceeds chars limit of 135 chars")
 
             payload["CustomerSMS"] = mesg
 
@@ -276,7 +322,7 @@ class HotRecharge:
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_ZESA}"
 
-        self.__conn.request("POST", url, dumps(payload), self.headers)
+        self.__conn.request("POST", url, dumps(payload), self.__headers)
 
         res  = self.__conn.getresponse()
 
@@ -300,7 +346,7 @@ class HotRecharge:
 
         url = f"{self.__API_VERSION}{self.__ZESA_CUSTOMER}"
 
-        self.__conn.request("POST", url, dumps(payload), self.headers)
+        self.__conn.request("POST", url, dumps(payload), self.__headers)
 
         res  = self.__conn.getresponse()
 

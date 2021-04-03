@@ -1,3 +1,22 @@
+## [2.0.0] - Apr 2021
+* **BREAKING CHANGE** - constructor now takes a config class arguement for credentials instead of dict of predefined keys 
+```python
+import hotrecharge
+
+# create config class
+config = hotrecharge.HRAuthConfig(
+    access_code='acc-email', 
+    access_password='acc-pwd',
+    reference='random-ref'
+)
+
+# pass config object to api constructor
+api = hotrecharge.HotRecharge(config)
+```
+* Added recharge EVD `electronic vouchers`
+* Added query evds to get all available EVDs
+* Can now perform data bundle recharge
+
 ## [1.4.0] - Mar 2021
 * Can now perform zesa recharge operations `api.zesaRecharge(..)`
 * Can check zesa customer details from meter number `api.checkZesaCustomer(..)`
