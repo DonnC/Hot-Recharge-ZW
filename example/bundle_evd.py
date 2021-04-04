@@ -33,14 +33,14 @@ try:
     sleep(5)
 
     print('=== recharge EVD ===')
-    recharge_evd = api.rechargeEVD(brand_id=24, pin_value=0.5, number='0712359809')
+    recharge_evd = api.rechargeEVD(brand_id, pin_value_or_denomination, number)
     print('Recharge EVD: ')
     pprint.pprint(recharge_evd)
 
     sleep(5)
 
     print('=== recharge bundle ===')
-    recharge_bndl = api.dataBundleRecharge(product_code='SMSD5', number='0778060126')
+    recharge_bndl = api.dataBundleRecharge(product_code, number)
     print('Recharge bundle: ')
     pprint.pprint(recharge_bndl)
 
