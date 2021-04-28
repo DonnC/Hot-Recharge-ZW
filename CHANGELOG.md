@@ -1,3 +1,6 @@
+## [2.1.0] - Apr 2021
+* fixed name error issue on `.rechargeZesa(..)` method
+
 ## [2.0.0] - Apr 2021
 * **BREAKING CHANGE** - constructor now takes a config class arguement for credentials instead of dict of predefined keys 
 ```python

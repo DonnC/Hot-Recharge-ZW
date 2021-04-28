@@ -16,7 +16,7 @@ class HotRecharge:
     """
         Hot Recharge Python Api Library
         __author__  Donald Chinhuru
-        __version__ 2.0.0
+        __version__ 2.1.0
         __name__    Hot Recharge Api
     """
 
@@ -315,7 +315,7 @@ class HotRecharge:
             pass 
 
         if notify_contact.startswith('07'):
-            payload["TargetNumber"] = number
+            payload["TargetNumber"] = notify_contact
 
         else:
             raise Exception("TargetNumber: `notify_contact` passed has incorrect format. Allowed formats are `07xxx..`")
