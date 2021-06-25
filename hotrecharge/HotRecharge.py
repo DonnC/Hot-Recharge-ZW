@@ -8,6 +8,7 @@
 
 from uuid import uuid4
 from json import dumps, loads
+from munch import Munch
 from http.client import HTTPSConnection
 
 from .HRConfig import HRAuthConfig
@@ -100,7 +101,13 @@ class HotRecharge:
         res  = self.__conn.getresponse()
         data = res.read()
 
-        return loads(data.decode("utf-8"))
+        _json_data = loads(data.decode("utf-8"))
+
+        # TODO: Trying out munch
+        
+        _wallet_obj = Munch.fromDict(_json_data)
+
+        return _wallet_obj
 
     def queryTransactionReference(self, agent_reference):
         """
