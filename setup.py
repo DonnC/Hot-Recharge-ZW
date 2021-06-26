@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="hot-recharge",
-    version="2.1.0",
+    version="3.0.0",
     author="Donald Chinhuru",
     author_email="donychinhuru@gmail.com",
     description="perform hot-recharge services with hot-recharge library programmatically",

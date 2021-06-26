@@ -1,3 +1,10 @@
+## [3.0.0] - Jun 2021
+* Added get zesa wallet balance
+* Added query zesa transaction
+* Improved documentation
+* **NEW** - can now opt to return a Munch object for easy access of attributes
+* **NEW** - api now raises custom api exceptions
+
 ## [2.1.0] - Apr 2021
 * fixed name error issue on `.rechargeZesa(..)` method
 
