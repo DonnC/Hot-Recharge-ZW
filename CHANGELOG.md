@@ -1,3 +1,6 @@
+## [3.1.0] - Jun 2021
+* fixed dependency not found issue
+
 ## [3.0.0] - Jun 2021
 * Added get zesa wallet balance
 * Added query zesa transaction

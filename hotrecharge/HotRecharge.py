@@ -19,7 +19,7 @@ class HotRecharge:
     """
     Hot Recharge Python Api Library
     __author__  Donald Chinhuru
-    __version__ 3.0.0
+    __version__ 3.1.0
     __name__    Hot Recharge Api
     """
 
