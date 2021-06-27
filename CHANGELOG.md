@@ -1,3 +1,7 @@
+## [3.2.0] - Jun 2021
+* added few more api custom exceptions
+* minor fixes
+
 ## [3.1.0] - Jun 2021
 * fixed dependency not found issue
 

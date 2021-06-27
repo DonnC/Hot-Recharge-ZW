@@ -5,6 +5,7 @@ from munch import Munch
 
 from .HotRechargeException import *
 
+
 class ApiExceptionHandler:
     """ApiExceptionHandler
 
@@ -38,6 +39,7 @@ class ApiExceptionHandler:
 
     def __switcher(self, message: str) -> dict:
         api_exception_mapper = {
+            4: PendingZesaTransaction(message),
             206: PrepaidPlatformFail(message),
             208: InsufficientBalance(message),
             209: OutOfPinStock(message),
