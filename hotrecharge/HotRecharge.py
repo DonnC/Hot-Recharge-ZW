@@ -19,7 +19,7 @@ class HotRecharge:
     """
     Hot Recharge Python Api Library
     __author__  Donald Chinhuru
-    __version__ 3.1.0
+    __version__ 3.2.0
     __name__    Hot Recharge Api
     """
 
@@ -53,13 +53,15 @@ class HotRecharge:
         """[HotRecharge]
 
         Args:
-            config (HRAuthConfig): config class object to hold auth credentials
-            use_random_ref (bool, optional): True -> let library take care of each request unique reference.
-                False -> you must provide a unique reference for each request manually by calling -> api.updateReference(...)
+            `config` (HRAuthConfig): config class object to hold auth credentials
+            `use_random_ref` (bool, optional): True -> let library take care of each request unique reference.
+                False -> you must provide a unique reference for each request manually by calling 
+                
+                >>> api.updateReference('unique-ref')
 
                 Defaults to True.
 
-            return_model (bool, optional): True -> return a python model class equivalent of the respond object
+            `return_model` (bool, optional): True -> return a python model class equivalent of the respond object
                 It uses a simple mechanism from [Munch], returns a Munch Object Model
 
                 if api response is:
@@ -181,7 +183,7 @@ class HotRecharge:
          Query a transaction for reconciliation: reccommended is to query within the last 30 days of the transaction
         :param: agent_reference := previous record's transaction agentReference used
         :return: api payload -> dict
-        :OriginalAgentReference -> dict object of original transaction response
+        :OriginalAgentReference -> object of original transaction response
 
         >>> {
                 'ReplyCode': replyCode,
@@ -224,7 +226,7 @@ class HotRecharge:
     def rechargePinless(self, amount, number, brandID=None, mesg=None) -> dict or Munch:
         """
         :param amount: a number
-        :param number: target phone number
+        :param number: target phone number in formart 07xx.. or 086xx..
         :param brandID - Optional:
         :param mesg - Optional, Customer sms to send, 135 chars max
         `mesg` place holders to use:
@@ -272,13 +274,7 @@ class HotRecharge:
         else:
             pass
 
-        if number.startswith("07") or number.startswith("08"):
-            payload["targetMobile"] = number
-
-        else:
-            raise Exception(
-                "targetMobile: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`"
-            )
+        payload["targetMobile"] = number
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_PINLESS}"
 
@@ -361,13 +357,7 @@ class HotRecharge:
         else:
             pass
 
-        if number.startswith("07") or number.startswith("08"):
-            payload["TargetMobile"] = number
-
-        else:
-            raise Exception(
-                "targetMobile: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`"
-            )
+        payload["TargetMobile"] = number
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_DATA}"
 
@@ -406,7 +396,7 @@ class HotRecharge:
         :param quantity: number of voucher pins to purchase
 
         :return: response dict payload
-        on successful, *pins will be a list of string : PIN, SerialNumber, BrandID, Denomination (PinValue), Expiry
+        on successful, *Pins will be a list of string : PIN, SerialNumber, BrandID, Denomination (PinValue), Expiry
         e.g ['0812273518776434,008101288101|17,.50,3/27/2021']
 
         >>> {
@@ -416,7 +406,7 @@ class HotRecharge:
             'RechargeID': rechargeID,
             'ReplyCode': replyCode,
             'ReplyMsg': replyMsg,
-            'Pins': pins,
+            'Pins': [pin],
             'WalletBalance': walletBalance,
         }
         """
@@ -427,14 +417,7 @@ class HotRecharge:
         payload["BrandID"] = str(brand_id)
         payload["Denomination"] = str(pin_value)
         payload["Quantity"] = str(quantity)
-
-        if number.startswith("07") or number.startswith("08"):
-            payload["TargetNumber"] = number
-
-        else:
-            raise Exception(
-                "targetNumber: `number` passed has incorrect format. Allowed formats are `07xxx..` or `086xxx...`"
-            )
+        payload["TargetNumber"] = number
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_EVD}"
 
@@ -471,12 +454,11 @@ class HotRecharge:
 
         >>> {
             'ReplyCode': replyCode,
-            'Bundles': [bundles],
+            'Bundles': [bundle],
             'AgentReference': agentReference,
         }
 
-        :bundles: list of `bundle` object
-        bundle
+        :bundle: list of `bundle` object
         >>> {
             'BundleId': bundleId,
             'BrandId': brandId,
@@ -589,12 +571,12 @@ class HotRecharge:
             'Meter': meter,
             'AccountName': accountName,
             'Address': address,
-            'Tokens': [tokens],
+            'Tokens': [token],
             'AgentReference': agentReference,
             'RechargeID': rechargeID,
         }
 
-        :tokens: list of token object
+        :token: list of token object
         >>> {
             'Token': token,
             'Units': units,
@@ -604,6 +586,8 @@ class HotRecharge:
             'TaxAmount': taxAmount,
             'ZesaReference': zesaReference,
         }
+
+        If it throws `ZesaPendingTransaction` excpetion, see ZesaPendingTransaction docstrings for more
         """
 
         self.__autoUpdateRef()
@@ -623,13 +607,7 @@ class HotRecharge:
         else:
             pass
 
-        if notify_contact.startswith("07"):
-            payload["TargetNumber"] = notify_contact
-
-        else:
-            raise Exception(
-                "TargetNumber: `notify_contact` passed has incorrect format. Allowed formats are `07xxx..`"
-            )
+        payload["TargetNumber"] = notify_contact
 
         url = f"{self.__API_VERSION}{self.__RECHARGE_ZESA}"
 
@@ -672,7 +650,7 @@ class HotRecharge:
             'ReplyMsg': replyMsg,
             'Meter': meter,
             'AgentReference': agentReference,
-            'CustomerInfo': [customer],
+            'CustomerInfo': <customer>,
         }
 
         :customer:
@@ -768,7 +746,7 @@ class HotRecharge:
         """
          Query a zesa transaction for reconciliation: reccommended is to query within the last 30 days of the transaction
         :param: recharge_id := previous zesa record's transaction RechargeId returned
-        :return: api payload -> dict
+        :return: api payload -> dict | Munch obj
 
         >>> {
             'ReplyCode': replyCode,
@@ -782,7 +760,7 @@ class HotRecharge:
             'Tokens': [tokens],
             'AgentReference': agentReference,
             'RechargeID': rechargeID,
-            'CustomerInfo': [customer],
+            'CustomerInfo': <customer>,
         }
 
         :tokens: list of token object

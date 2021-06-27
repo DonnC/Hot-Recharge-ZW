@@ -12,7 +12,8 @@ class HotRechargeException(Exception):
     """HotRechargeException base exception for api exceptions
 
     Args:
-        Exception ([type]): [description]
+        Exception (HotRechargeException): base exception for all other api exceptions
+                                          you can use this base class if you are not sure which specific exception to target although its not good practise
     """
 
     pass
@@ -48,6 +49,25 @@ class InvalidContact(HotRechargeException):
     pass
 
 
+class PendingZesaTransaction(HotRechargeException):
+    """PendingZesaTransaction Exception
+
+    Args:
+        HotRechargeException (PendingZesaTransaction): indicates Pending Zesa Verification
+
+        Transactions in this state can result in successful transactions after a period of time once Zesa completes transaction / verification.
+
+        If it happens, you can call the below method periodically to poll transaction status
+
+        Request should not exceed more than 4 requests / minute
+        >>> zesa_trans = api.queryZesaTransaction('<recharge-id>')
+
+
+    """
+
+    pass
+
+
 class PrepaidPlatformFail(HotRechargeException):
     """PrepaidPlatformFail Exception
 
@@ -61,6 +81,15 @@ class RechargeAmountLimit(HotRechargeException):
     """RechargeAmountLimit Exception
 
     Failed recharge amount limit, too little / too much
+    """
+
+    pass
+
+
+class ReferenceExceedLimit(HotRechargeException):
+    """ReferenceExceedLimit Exception
+
+    passed reference exceeds required limit
     """
 
     pass
