@@ -4,5 +4,5 @@ from .HotRecharge import HotRecharge, HRAuthConfig
 from .HotRechargeException import *
 
 __author__ = "Donald Chinhuru"
-__version__ = "3.2.0"
+__version__ = "3.3.0"
 __name__ = "hot-recharge"
