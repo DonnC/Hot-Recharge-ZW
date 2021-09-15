@@ -7,6 +7,8 @@
     - force to throw exceptions when api response has error
 """
 
+from munch import Munch
+
 
 class HotRechargeException(Exception):
     """HotRechargeException base exception for api exceptions
@@ -16,7 +18,10 @@ class HotRechargeException(Exception):
                                           you can use this base class if you are not sure which specific exception to target although its not good practise
     """
 
-    pass
+    def __init__(self, message, response:Munch = None):
+        super().__init__(message)
+        self.message = message
+        self.response = response
 
 
 class DuplicateReference(HotRechargeException):

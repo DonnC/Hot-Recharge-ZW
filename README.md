@@ -192,6 +192,14 @@ except Exception as ex:
     print(f"There was a problem: {ex}")
 ```
 
+## Note on Exceptions
+- `HotRechargeException` is the base class for all exceptions
+- All exceptions are subclasses of `HotRechargeException` 
+- All exceptions have a `message` property that contains the error message
+- All exceptions have a `response` property that contains the response object(which is a `Munch`). In some cases this will be `None`, so dont get mad if you see `None`😁.
+- One of the best use cases of the `response` property is when a `PendingZesaTransaction` exception gets raised. you can save `rechargeID`, then you can use it later to query the transaction status. 
+
+
 ## Support 🤿
 - This is not an official hot-recharge python library
 - I initiated, develop and maintain this library on my own spare time 
