@@ -27,35 +27,35 @@ class ApiExceptionHandler:
         if hasattr(self.response, "ReplyCode"):
             if int(self.response.ReplyCode) != 2:
                 raise self.__switcher(_msg).get(
-                    int(self.response.ReplyCode), HotRechargeException(_msg)
+                    int(self.response.ReplyCode), HotRechargeException(_msg, self.response)
                 )
 
         if self.is_429_401:
-            raise self.__switcher(_msg).get(self.is_429_401, HotRechargeException(_msg))
+            raise self.__switcher(_msg).get(self.is_429_401, HotRechargeException(_msg, self.response))
 
         else:
             # raise default error
-            raise HotRechargeException(_msg)
+            raise HotRechargeException(_msg, self.response)
 
     def __switcher(self, message: str) -> dict:
         api_exception_mapper = {
-            4: PendingZesaTransaction(message),
-            206: PrepaidPlatformFail(message),
-            208: InsufficientBalance(message),
-            209: OutOfPinStock(message),
-            210: PrepaidPlatformFail(message),
-            216: DuplicateRequestException(message),
-            217: InvalidContact(message),
-            218: AuthorizationError(message),
-            219: WebServiceException(message),
-            220: AuthorizationError(message),
-            221: BalanceRequestError(message),
-            222: RechargeAmountLimit(message),
+            4: PendingZesaTransaction(message, self.response),
+            206: PrepaidPlatformFail(message, self.response),
+            208: InsufficientBalance(message, self.response),
+            209: OutOfPinStock(message, self.response),
+            210: PrepaidPlatformFail(message, self.response),
+            216: DuplicateRequestException(message, self.response),
+            217: InvalidContact(message, self.response),
+            218: AuthorizationError(message, self.response),
+            219: WebServiceException(message, self.response),
+            220: AuthorizationError(message, self.response),
+            221: BalanceRequestError(message, self.response),
+            222: RechargeAmountLimit(message, self.response),
             # -------- http status code -----------
-            401: AuthorizationError(message),
-            429: DuplicateReference(message),
+            401: AuthorizationError(message, self.response),
+            429: DuplicateReference(message, self.response),
             # -------------------------------------
-            800: TransactionNotFound(message),
+            800: TransactionNotFound(message, self.reponse),
         }
 
         return api_exception_mapper

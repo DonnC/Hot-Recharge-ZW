@@ -1,3 +1,6 @@
+## [3.3.0] - Sept 2021
+* get response object in exceptions
+
 ## [3.2.0] - Jun 2021
 * added few more api custom exceptions
 * minor fixes
