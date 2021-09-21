@@ -55,7 +55,7 @@ class ApiExceptionHandler:
             401: AuthorizationError(message, self.response),
             429: DuplicateReference(message, self.response),
             # -------------------------------------
-            800: TransactionNotFound(message, self.reponse),
+            800: TransactionNotFound(message, self.response),
         }
 
         return api_exception_mapper
