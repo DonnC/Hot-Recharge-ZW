@@ -1,3 +1,6 @@
+## [3.3.1] - Sept 2021
+* Fix 'ApiExceptionHandler' object has no attribute 'reponse'
+
 ## [3.3.0] - Sept 2021
 * get response object in exceptions
 
