@@ -1,5 +1,5 @@
 # [Hot Recharge](https://ssl.hot.co.zw/)
-perform hot-recharge services with hot-recharge python library programmatically
+perform hot-recharge services with hot-recharge python library programmaticaly
 
 - ℹ Not an official hot-recharge python library
 
