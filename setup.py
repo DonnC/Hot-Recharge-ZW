@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="hot-recharge",
-    version="3.3.1",
+    version="4.0.0",
     author="Donald Chinhuru",
     author_email="donychinhuru@gmail.com",
     description="perform hot-recharge services with hot-recharge library programmatically",
@@ -14,7 +14,7 @@ setuptools.setup(
     url="https://github.com/DonnC/Hot-Recharge-ZW",
     license="MIT",
     packages=setuptools.find_packages(),
-    install_requires=["munch"],
+    install_requires=["munch", "requests", "pyopenssl"],
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
