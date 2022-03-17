@@ -1,3 +1,6 @@
+## [4.0.0] - Mar 2022
+* Use `requests` library
+
 ## [3.3.1] - Sept 2021
 * Fix 'ApiExceptionHandler' object has no attribute 'reponse'
 

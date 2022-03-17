@@ -1,7 +1,7 @@
 """
     @author:    DonnC <https://github.com/DonnC>
     @created:   December 2019
-    @updated:   June 2021
+    @updated:   Mar 2022
 
     HotRecharge api main class
 """
@@ -9,7 +9,7 @@
 from uuid import uuid4
 from json import dumps, loads
 from munch import Munch, munchify
-from http.client import HTTPSConnection
+import requests as req
 
 from .HRConfig import HRAuthConfig
 from .HotRechargeExcHandler import ApiExceptionHandler
@@ -19,11 +19,11 @@ class HotRecharge:
     """
     Hot Recharge Python Api Library
     __author__  Donald Chinhuru
-    __version__ 3.3.1
+    __version__ 4.0.0
     __name__    Hot Recharge Api
     """
 
-    __ROOT_ENDPOINT = "ssl.hot.co.zw"
+    __ROOT_ENDPOINT = "https://ssl.hot.co.zw"
     __API_VERSION = "/api/v1/"
     __MIME_TYPES = "application/json"
 
@@ -41,7 +41,7 @@ class HotRecharge:
     __QUERY_EVD = "agents/query-evd"
     __RECHARGE_EVD = "agents/recharge-evd"
 
-    __conn = HTTPSConnection(__ROOT_ENDPOINT)
+    __base_url__ = __ROOT_ENDPOINT + __API_VERSION
     __headers = {}
 
     def __init__(
@@ -91,6 +91,7 @@ class HotRecharge:
         self.config = config
         self.return_model = return_model
         self.__setupHeaders()
+        print('-- req --')
 
     def __setupHeaders(self):
         if self.config:
@@ -148,17 +149,13 @@ class HotRecharge:
         """
         self.__autoUpdateRef()
 
-        url = f"{self.__API_VERSION}{self.__WALLET_BALANCE}"
+        url = f"{self.__base_url__}{self.__WALLET_BALANCE}"
 
-        resp = self.__conn.request("GET", url=url, headers=self.__headers)
+        resp = req.request("GET", url=url, headers=self.__headers)
 
-        res = self.__conn.getresponse()
+        status_code = resp.status_code
 
-        data = res.read()
-
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -195,16 +192,13 @@ class HotRecharge:
         """
         self.__autoUpdateRef()
 
-        url = f"{self.__API_VERSION}{self.__QUERY_TRANSACTION}{agent_reference}"
+        url = f"{self.__base_url__}{self.__QUERY_TRANSACTION}{agent_reference}"
 
-        self.__conn.request("GET", url=url, headers=self.__headers)
+        resp = req.request("GET", url=url, headers=self.__headers)
 
-        res = self.__conn.getresponse()
-        data = res.read()
+        status_code = resp.status_code
 
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -276,17 +270,13 @@ class HotRecharge:
 
         payload["targetMobile"] = number
 
-        url = f"{self.__API_VERSION}{self.__RECHARGE_PINLESS}"
+        url = f"{self.__base_url__}{self.__RECHARGE_PINLESS}"
 
-        self.__conn.request("POST", url, dumps(payload), self.__headers)
+        resp = req.request("POST", url=url, headers=self.__headers, data=dumps(payload))
 
-        res = self.__conn.getresponse()
+        status_code = resp.status_code
 
-        data = res.read()
-
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -359,16 +349,13 @@ class HotRecharge:
 
         payload["TargetMobile"] = number
 
-        url = f"{self.__API_VERSION}{self.__RECHARGE_DATA}"
+        url = f"{self.__base_url__}{self.__RECHARGE_DATA}"
 
-        self.__conn.request("POST", url, dumps(payload), self.__headers)
+        resp = req.request("POST", url=url, headers=self.__headers, data=dumps(payload))
 
-        res = self.__conn.getresponse()
-        data = res.read()
+        status_code = resp.status_code
 
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -419,16 +406,13 @@ class HotRecharge:
         payload["Quantity"] = str(quantity)
         payload["TargetNumber"] = number
 
-        url = f"{self.__API_VERSION}{self.__RECHARGE_EVD}"
+        url = f"{self.__base_url__}{self.__RECHARGE_EVD}"
 
-        self.__conn.request("POST", url, dumps(payload), self.__headers)
+        resp = req.request("POST", url=url, headers=self.__headers, data=dumps(payload))
 
-        res = self.__conn.getresponse()
-        data = res.read()
+        status_code = resp.status_code
 
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -472,16 +456,13 @@ class HotRecharge:
         """
         self.__autoUpdateRef()
 
-        url = f"{self.__API_VERSION}{self.__GET_DATA_BUNDLE}"
+        url = f"{self.__base_url__}{self.__GET_DATA_BUNDLE}"
 
-        self.__conn.request("GET", url=url, headers=self.__headers)
+        resp = req.request("GET", url=url, headers=self.__headers)
 
-        res = self.__conn.getresponse()
-        data = res.read()
+        status_code = resp.status_code
 
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -523,16 +504,13 @@ class HotRecharge:
         """
         self.__autoUpdateRef()
 
-        url = f"{self.__API_VERSION}{self.__QUERY_EVD}"
+        url = f"{self.__base_url__}{self.__QUERY_EVD}"
 
-        self.__conn.request("GET", url=url, headers=self.__headers)
+        resp = req.request("GET", url=url, headers=self.__headers)
 
-        res = self.__conn.getresponse()
-        data = res.read()
+        status_code = resp.status_code
 
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -609,17 +587,13 @@ class HotRecharge:
 
         payload["TargetNumber"] = notify_contact
 
-        url = f"{self.__API_VERSION}{self.__RECHARGE_ZESA}"
+        url = f"{self.__base_url__}{self.__RECHARGE_ZESA}"
 
-        self.__conn.request("POST", url, dumps(payload), self.__headers)
+        resp = req.request("POST", url=url, headers=self.__headers, data=dumps(payload))
 
-        res = self.__conn.getresponse()
+        status_code = resp.status_code
 
-        data = res.read()
-
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -669,17 +643,13 @@ class HotRecharge:
             "MeterNumber": meter_number,
         }
 
-        url = f"{self.__API_VERSION}{self.__ZESA_CUSTOMER}"
+        url = f"{self.__base_url__}{self.__ZESA_CUSTOMER}"
 
-        self.__conn.request("POST", url, dumps(payload), self.__headers)
+        resp = req.request("POST", url=url, headers=self.__headers, data=dumps(payload))
 
-        res = self.__conn.getresponse()
+        status_code = resp.status_code
 
-        data = res.read()
-
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -713,17 +683,13 @@ class HotRecharge:
 
         self.__autoUpdateRef()
 
-        url = f"{self.__API_VERSION}{self.__ZESA_BALANCE}"
+        url = f"{self.__base_url__}{self.__ZESA_BALANCE}"
 
-        resp = self.__conn.request("GET", url=url, headers=self.__headers)
+        resp = req.request("GET", url=url, headers=self.__headers)
 
-        res = self.__conn.getresponse()
+        status_code = resp.status_code
 
-        data = res.read()
-
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
@@ -786,17 +752,13 @@ class HotRecharge:
 
         payload = {"RechargeId": str(recharge_id)}
 
-        url = f"{self.__API_VERSION}{self.__QUERY_ZESA}"
+        url = f"{self.__base_url__}{self.__QUERY_ZESA}"
 
-        self.__conn.request("POST", url, dumps(payload), self.__headers)
+        resp = req.request("POST", url=url, headers=self.__headers, data=dumps(payload))
 
-        res = self.__conn.getresponse()
+        status_code = resp.status_code
 
-        data = res.read()
-
-        status_code = res.status
-
-        _json_data = loads(data.decode("utf-8"))
+        _json_data = resp.json()
 
         _munch_obj = munchify(_json_data)
 
